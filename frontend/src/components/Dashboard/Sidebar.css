@@ -1,0 +1,36 @@
+.sidebar-container {
+  width: 250px;
+  background: #2c3e50;
+  padding: 1.5rem;
+  color: white;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar-user-info {
+  padding: 1rem;
+  border-bottom: 1px solid #34495e;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-nav-button {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  background: none;
+  border: none;
+  color: #ecf0f1;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.sidebar-nav-button:hover {
+  background: #34495e;
+}
+
+.sidebar-nav-button.active {
+  background: #3498db;
+  font-weight: 600;
+}

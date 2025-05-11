@@ -1,0 +1,135 @@
+:root {
+  --primary-color: #2c3e50;       /* Azul mais profissional */
+  --secondary-color: #3498db;     /* Azul mais claro para contrastes */
+  --background-color: #f8f9fa;    /* Fundo mais suave */
+  --white: #ffffff;
+  --text-color: #2c3e50;          /* Cor do texto mais escura */
+  --radius: 10px;
+  --spacing: 1rem;
+  --primary-dark: #1a2634;        /* Para hover do botão primário */
+  --secondary-dark: #2874a6;      /* Para hover do botão secundário */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif; /* Fonte mais moderna */
+}
+
+.home-container {
+  background: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100vh;
+  padding: calc(var(--spacing) * 3);
+  gap: 1.5rem; /* Espaçamento uniforme entre elementos */
+}
+
+.home-logo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain; /* Garante que a logo não fique distorcida */
+  margin-bottom: calc(var(--spacing) * 1.5);
+  border-radius: 20%; /* Bordas menos redondas */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: var(--white); /* Fundo branco para logos transparentes */
+  padding: 0.5rem;
+}
+
+.home-container h1 {
+  font-size: 2.4rem;
+  color: var(--primary-color);
+  margin: 0;
+  line-height: 1.3;
+  max-width: 800px;
+}
+
+.home-container h2 {
+  font-size: 1.3rem;
+  color: var(--text-color);
+  font-weight: 400;
+  margin: 0.5rem 0;
+  opacity: 0.9;
+}
+
+.home-container p {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.auth-options {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.auth-options .btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-options .btn-primary {
+  background: var(--primary-color);
+  color: var(--white);
+  border: 2px solid var(--primary-color);
+}
+
+.auth-options .btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.auth-options .btn-secondary {
+  background: var(--secondary-color);
+  color: var(--white);
+  border: 2px solid var(--secondary-color);
+}
+
+.auth-options .btn-secondary:hover {
+  background: var(--secondary-dark);
+  border-color: var(--secondary-dark);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 2rem;
+  }
+  
+  .home-container h1 {
+    font-size: 1.8rem;
+  }
+  
+  .home-container h2 {
+    font-size: 1.1rem;
+  }
+  
+  .home-logo {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .auth-options {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .auth-options .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

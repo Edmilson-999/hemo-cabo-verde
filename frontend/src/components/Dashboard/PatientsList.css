@@ -1,0 +1,43 @@
+.patient-list-container {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 250px; 
+}
+
+.patient-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.patient-search-input {
+  padding: 0.75rem;
+  width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.patients-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.patients-table th,
+.patients-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.patient-link {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.patient-link:hover {
+  text-decoration: underline;
+}

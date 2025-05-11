@@ -1,70 +1,171 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 📋 Sistema de Gestão de Hemofílicos - Cabo Verde
 
-## Available Scripts
+Sistema completo para cadastro e acompanhamento de pacientes hemofílicos, com autenticação segura e dashboard médico.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Começando
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📦 Pré-requisitos
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* [Node.js](https://nodejs.org/) (v16+)
+* [npm](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
+* [MongoDB](https://www.mongodb.com/) (Atlas ou local)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠 Configuração Local
 
-### `npm run build`
+### 1. Clone o repositório
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+git clone https://github.com/seu-usuario/projecto-final.git
+cd projecto-final
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Configurar o Backend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+cd backend
+npm install
+```
 
-### `npm run eject`
+Crie um arquivo `.env` na pasta `backend` com o seguinte conteúdo:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```env
+MONGODB_URI=mongodb+srv://usuario:senha@cluster0.mongodb.net/hemo-cv?retryWrites=true&w=majority
+JWT_SECRET=seu_segredo_super_forte_aqui
+JWT_EXPIRE=24h
+PORT=5000
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. Configurar o Frontend
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+cd ../frontend
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Crie um arquivo `.env` na pasta `frontend`:
 
-## Learn More
+```env
+REACT_APP_API_URL=http://localhost:5000
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+##  Executando o Sistema
 
-### Code Splitting
+###  Opção 1: Terminal Único (Recomendado)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+cd backend
+npm install -g concurrently
+npm run dev
+```
 
-### Analyzing the Bundle Size
+### 💡 Opção 2: Terminais Separados
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+# Terminal 1 (Backend)
+cd backend
+npm start
 
-### Making a Progressive Web App
+# Terminal 2 (Frontend)
+cd ../frontend
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+🔗 Acesse: [http://localhost:3000](http://localhost:3000)
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 👤 Primeiro Acesso
 
-### Deployment
+1. **Registre um usuário admin**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+   * Acesse `/register`
+   * Use um e-mail válido e selecione a role "admin"
 
-### `npm run build` fails to minify
+2. **Funcionalidades disponíveis após login**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   * Cadastro de pacientes
+   * Visualização de estatísticas
+   * Gestão de usuários (admin)
+
+---
+
+##  Docker (Opcional)
+
+Execute:
+
+```bash
+docker-compose up --build
+```
+
+🔹 Isso configura automaticamente:
+
+* Backend na porta `5000`
+* Frontend na porta `3000`
+* MongoDB na porta `27017`
+
+---
+
+##  Solução de Problemas
+
+### ❗ Erro de conexão com MongoDB
+
+Verifique:
+
+* String de conexão no `.env`
+* Credenciais no MongoDB Atlas
+* IP autorizado em *Network Access*
+
+###  Erros de CORS
+
+Adicione no `backend/server.js`:
+
+```javascript
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+```
+
+---
+
+##  Estrutura do Projeto
+
+```
+projecto-final/
+├── backend/
+│   ├── controllers/      # Lógica das rotas
+│   ├── models/           # Modelos do MongoDB
+│   ├── routes/           # Definições de rotas
+│   └── server.js         # Ponto de entrada do servidor
+├── frontend/
+│   ├── public/           # Assets estáticos
+│   ├── src/
+│   │   ├── components/   # Componentes React
+│   │   ├── pages/        # Páginas principais
+│   │   └── App.js        # Arquivo principal de rotas
+└── README.md
+```
+
+---
+
+##  Licença
+
+Este projeto está sob a licença MIT – veja [LICENSE.md](LICENSE.md) para mais detalhes.
+
+---
+
+##  Dicas de Desenvolvimento
+
+```bash
+npm install -g nodemon  # Reinício automático do backend
+```
+
+-
+
