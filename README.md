@@ -1,4 +1,3 @@
-
 #  Sistema de Gestão de Hemofílicos - Cabo Verde
 
 Sistema completo para cadastro e acompanhamento de pacientes hemofílicos, com autenticação segura e dashboard médico.
