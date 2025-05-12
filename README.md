@@ -1,13 +1,13 @@
 
-# 📋 Sistema de Gestão de Hemofílicos - Cabo Verde
+#  Sistema de Gestão de Hemofílicos - Cabo Verde
 
 Sistema completo para cadastro e acompanhamento de pacientes hemofílicos, com autenticação segura e dashboard médico.
 
 ---
 
-## 🚀 Começando
+## Começando
 
-### 📦 Pré-requisitos
+###  Pré-requisitos
 
 * [Node.js](https://nodejs.org/) (v16+)
 * [npm](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
@@ -20,7 +20,7 @@ Sistema completo para cadastro e acompanhamento de pacientes hemofílicos, com a
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/projecto-final.git
+git clone https://github.com/Edmilson-999/projecto-final.git
 cd projecto-final
 ```
 
@@ -65,7 +65,7 @@ npm install -g concurrently
 npm run dev
 ```
 
-### 💡 Opção 2: Terminais Separados
+###  Opção 2: Terminais Separados
 
 ```bash
 # Terminal 1 (Backend)
@@ -81,7 +81,7 @@ npm start
 
 ---
 
-## 👤 Primeiro Acesso
+##  Primeiro Acesso
 
 1. **Registre um usuário admin**
 
@@ -114,7 +114,7 @@ docker-compose up --build
 
 ##  Solução de Problemas
 
-### ❗ Erro de conexão com MongoDB
+###  Erro de conexão com MongoDB
 
 Verifique:
 
