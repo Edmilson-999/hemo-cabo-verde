@@ -168,3 +168,10 @@ npm install -g nodemon  # Reinício automático do backend
 
 -
 
+"scripts": {
+  "start": "node backend/server.js",
+  "dev": "nodemon backend/server.js",
+  "client": "npm start --prefix frontend",
+  "dev:full": "concurrently \"npm run dev\" \"npm run client\""
+}
+

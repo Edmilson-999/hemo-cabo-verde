@@ -1,194 +1,119 @@
-const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { validationResult } = require('express-validator');
+const { v4: uuidv4 } = require('uuid');
 
-/**
- * @desc    Registra um novo usuário (médico ou admin)
- * @route   POST /api/auth/register
- * @access  Público
- */
-const register = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+exports.register = (req, res) => {
+    const db = req.app.get('db');
+    const { username, password, role = 'user' } = req.body;
 
-    try {
-        const { name, username, email, phone, password, role } = req.body;
-
-        const existingEmail = await User.findOne({ email });
-        if (existingEmail) {
-            return res.status(400).json({ 
+    // 1. Verificar se usuário já existe
+    db.get('SELECT username FROM users WHERE username = ?', [username], (err, row) => {
+        if (err) {
+            return res.status(500).json({
                 success: false,
-                message: 'E-mail já cadastrado' 
+                message: 'Erro ao verificar usuário existente'
             });
         }
 
-        const existingUsername = await User.findOne({ username });
-        if (existingUsername) {
-            return res.status(400).json({ 
-                success: false,
-                message: 'Nome de usuário já existe' 
-            });
-        }
-
-        const user = new User({ 
-            name, 
-            username,
-            email, 
-            phone,
-            password, 
-            role: role || 'medico' 
-        });
-
-        await user.save();
-
-        const token = generateToken(user);
-
-        res.status(201).json({
-            success: true,
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            },
-            message: 'Registro realizado com sucesso'
-        });
-
-    } catch (err) {
-        console.error('Erro no registro:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Erro no servidor',
-            error: err.message
-        });
-    }
-};
-
-/**
- * @desc    Autentica um usuário
- * @route   POST /api/auth/login
- * @access  Público
- */
-const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
+        if (row) {
             return res.status(400).json({
                 success: false,
-                message: 'Por favor, forneça e-mail e senha'
+                message: 'Nome de usuário já existe'
             });
         }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Credenciais inválidas'
-            });
-        }
+        // 2. Criar hash da senha
+        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Erro ao criar hash da senha'
+                });
+            }
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Credenciais inválidas'
-            });
-        }
+            // 3. Inserir novo usuário
+            const userId = uuidv4().replace(/-/g, '').substring(0, 24);
+            db.run(
+                `INSERT INTO users (_id, username, password, role) VALUES (?, ?, ?, ?)`,
+                [userId, username, hashedPassword, role],
+                function(runErr) {
+                    if (runErr) {
+                        return res.status(500).json({
+                            success: false,
+                            message: 'Erro ao registrar usuário'
+                        });
+                    }
 
-        const token = generateToken(user);
+                    // 4. Gerar token JWT
+                    const token = jwt.sign(
+                        { id: userId, username, role },
+                        process.env.JWT_SECRET,
+                        { expiresIn: '1h' }
+                    );
 
-        res.json({
-            success: true,
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            },
-            message: 'Login realizado com sucesso'
+                    res.status(201).json({
+                        success: true,
+                        token,
+                        user: { id: userId, username, role }
+                    });
+                }
+            );
         });
-
-    } catch (err) {
-        console.error('Erro no login:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Erro no servidor',
-            error: err.message
-        });
-    }
+    });
 };
 
-/**
- * @desc    Obtém informações do usuário logado
- * @route   GET /api/auth/me
- * @access  Privado
- */
-const getMe = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password');
-        
-        res.json({
-            success: true,
-            data: user
-        });
-    } catch (err) {
-        console.error('Erro ao buscar usuário:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Erro no servidor'
-        });
-    }
-};
+exports.login = (req, res) => {
+    const db = req.app.get('db');
+    const { username, password } = req.body;
 
-/**
- * @desc    Verifica se um token é válido
- * @route   GET /api/auth/verify
- * @access  Privado
- */
-const verifyToken = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password');
-        
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Usuário não encontrado'
+    // 1. Buscar usuário
+    db.get(
+        'SELECT _id, username, password, role FROM users WHERE username = ?',
+        [username],
+        (err, user) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Erro ao buscar usuário'
+                });
+            }
+
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Credenciais inválidas'
+                });
+            }
+
+            // 2. Verificar senha
+            bcrypt.compare(password, user.password, (compareErr, isMatch) => {
+                if (compareErr || !isMatch) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Credenciais inválidas'
+                    });
+                }
+
+                // 3. Gerar token JWT
+                const token = jwt.sign(
+                    { id: user._id, username: user.username, role: user.role },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1h' }
+                );
+
+                res.json({
+                    success: true,
+                    token,
+                    user: { id: user._id, username: user.username, role: user.role }
+                });
             });
         }
-
-        res.json({
-            success: true,
-            data: user
-        });
-    } catch (err) {
-        console.error('Erro na verificação de token:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Erro na verificação de token'
-        });
-    }
-};
-
-const generateToken = (user) => {
-    return jwt.sign(
-        { 
-            id: user._id, 
-            role: user.role 
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRE || '24h' }
     );
 };
 
-module.exports = {
-    register,
-    login,
-    getMe,
-    verifyToken
+exports.getUser = (req, res) => {
+    res.json({
+        success: true,
+        user: req.user
+    });
 };

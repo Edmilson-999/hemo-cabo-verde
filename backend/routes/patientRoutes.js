@@ -1,27 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const { auth, authorize } = require('../middleware/authMiddleware');
-const {
-  createPatient,
-  getAllPatients,
-  getPatientById,
-  updatePatient,
-  deletePatient,
-  getPatientStats
-} = require('../controllers/patientController');
+const patientController = require('../controllers/patientController');
+const authMiddleware = require('../middleware/authMiddleware');
+const { check } = require('express-validator');
 
-router.use(auth);
+// Rotas protegidas por autenticação
+router.use(authMiddleware.auth);
 
-router.route('/')
-  .post(authorize('medico', 'admin'), createPatient)
-  .get(authorize('medico', 'admin'), getAllPatients);
+/**
+ * @route GET /api/patients
+ * @access Privado (Médico/Admin)
+ */
+router.get('/', patientController.getAllPatients);
 
-router.route('/stats')
-  .get(authorize('medico', 'admin'), getPatientStats);
+/**
+ * @route POST /api/patients
+ * @access Privado (Médico/Admin)
+ */
+router.post(
+    '/',
+    [
+        check('fullName', 'Nome completo é obrigatório').not().isEmpty(),
+        check('hemophiliaType', 'Tipo de hemofilia é obrigatório').not().isEmpty()
+    ],
+    patientController.createPatient
+);
 
-router.route('/:id')
-  .get(authorize('medico', 'admin'), getPatientById)
-  .put(authorize('medico', 'admin'), updatePatient)
-  .delete(authorize('admin'), deletePatient);
+/**
+ * @route GET /api/patients/:id
+ * @access Privado (Médico/Admin)
+ */
+router.get('/:id', patientController.getPatientById);
+
+/**
+ * @route PUT /api/patients/:id
+ * @access Privado (Médico/Admin)
+ */
+router.put('/:id', patientController.updatePatient);
+
+/**
+ * @route DELETE /api/patients/:id
+ * @access Privado (Admin)
+ */
+router.delete('/:id', authMiddleware.authorize('admin'), patientController.deletePatient);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
 })
 
 api.interceptors.request.use(config => {
@@ -11,6 +11,26 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
+
+export const getPatientItems = async (patientId) => {
+  try {
+    const response = await api.get(`/patient/${patientId}/items`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar itens:', error);
+    throw error;
+  }
+};
+
+export const addItem = async (patientId, itemData) => {
+  try {
+    const response = await api.post(`/patient/${patientId}/items`, itemData);
+    return response.data;
+  } catch (error) {
+    console.log('Erro ao adicionar item:', error)
+    throw error
+  }
+};
 
 export const authService = {
     async login(email, password) {
@@ -35,6 +55,6 @@ export const authService = {
     logout() {
       return Promise.resolve();
     }
-  };
+};
 
-  export default api;
+export default api;
